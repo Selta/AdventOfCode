@@ -16,6 +16,10 @@ func main() {
     distances := calcEachDistance(left, right)
     distance := calcDistance(distances)
     fmt.Println("Total Distance: ", distance)
+    counts := countRepeats(left, right) 
+    // fmt.Println("the counts are: ", counts)
+    similarity := calcSimilarity(left, counts)
+    fmt.Println("The similarity score is: ", similarity)
 }
 
 func parseLocations(filename string) ([]int, []int, error) {
@@ -52,7 +56,7 @@ func sortLocations(left, right []int) {
 func calcEachDistance(left, right []int) ([]int) {
     // we're reasonably sure there are the same number of indxes but let's validate
     if len(left) != len(right) {
-        fmt.Println("Locations have different lenghts")
+        fmt.Println("Locations have different lengths")
 	return nil
     }
     var distances []int
@@ -70,4 +74,26 @@ func calcDistance(distances []int) (int) {
         distance += val
     }
     return distance
+}
+
+func countRepeats(left, right []int) ([]int) {
+    countMap := make(map[int]int)
+    for _, value := range right {
+	countMap[value]++
+    }
+    var counts []int
+    for _, value := range left {
+	counts = append(counts, countMap[value])
+   }
+   return counts
+}
+
+func calcSimilarity(left, counts []int) (int) {
+    similarityScore := 0
+    for i, count := range counts {
+        if count > 0 {
+            similarityScore += (left[i]*count)
+        }
+    }
+    return similarityScore
 }
