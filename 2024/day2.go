@@ -52,24 +52,23 @@ func parseReports(filename string) ([]Report, error) {
 }
 
 func inspectReport(report Report) bool {
-    // levels are either increasing or decreasing
-    isIncreasing := true
-    isDecreasing := true
-    isEqual := true
+    // levels must be all increasing or all decreasing
+    levelsIncreasing := false
+    levelsDecreasing := false
+    levelsEqual := false
     for i := 1; i < len(report); i++ {
        	if report[i] > report[i-1] {
-	    isDecreasing = false
+	    levelsIncreasing = true
 	} else if report[i] < report[i-1] {
-	    isIncreasing = false
+	    levelsDecreasing = true
 	} else if report[i] == report[i-1] {
-	    isEqual = true
+	    levelsEqual = true
 	}
     }
     // If not all increasing nor all decreasing, it's not safe
-    if !isIncreasing && !isDecreasing && isEqual  {
+    if levelsIncreasing && (levelsDecreasing || levelsEqual)  {
        	return false
-    } else {
-    }
+    } 
     // Condition 2: Check if the difference between adjacent levels is > 1 and< 3
     for i := 1; i < len(report); i++ {
         delta := int(math.Abs(float64(report[i] - report[i-1])))
