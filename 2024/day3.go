@@ -21,7 +21,7 @@ func findMuls(filename string) []string {
     file, _ := os.Open(filename)
     defer file.Close()
 
-    mulRegEx := `mul\((\d{1,3}),\s*(\d{1,3})\)`
+    mulRegEx := `mul\((\d{1,3}),\s*(\d{1,3})\)|do\(\)|don't\(\)`
     regEx, _ := regexp.Compile(mulRegEx)
 
     var muls []string
@@ -32,40 +32,19 @@ func findMuls(filename string) []string {
 
     for scanner.Scan() {
         line := scanner.Text()
-        startIdx := 0 // Start from the beginning of the line
-
-        for startIdx < len(line) {
-            dontIdx := strings.Index(line[startIdx:], "don't()") 
-            doIdx := strings.Index(line[startIdx:], "do()")
-
-            if dontIdx == -1 && doIdx == -1 {
-                if toRetain {
-                    mulsFound := regEx.FindAllString(line[startIdx:], -1)
-                    if len(mulsFound) > 0 {
-                        muls = append(muls, mulsFound...)
-                    }
-                }
-                break
-            }
-
-            if dontIdx != -1 && (dontIdx < doIdx || doIdx == -1) {
-                toRetain = false // Disable future mul instructions
-                startIdx += dontIdx + 7 // Move past "don't()"
-            } else if doIdx != -1 {
-                toRetain = true // Enable future mul instructions
-                startIdx += doIdx + 5 // Move past "do()"
-            }
-
-            if toRetain {
-                mulsFound := regEx.FindAllString(line[startIdx:], -1)
-                if len(mulsFound) > 0 {
-                    muls = append(muls, mulsFound...)
-                }
-            }
-	    startIdx++
+        matches := regEx.FindAllString(line, -1)
+	for _, match := range matches {
+	    if match == "do()" {
+		toRetain = true
+	    } else if match == "don't()" {
+		toRetain = false
+            } else {
+		if toRetain {
+		    muls = append(muls, match)
+	        }
+	    }
         }
-    }
-
+    }    
     return muls
 }
 
