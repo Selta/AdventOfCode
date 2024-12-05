@@ -96,8 +96,7 @@ func cornerChk(puzzle []string, xPos, yPos, xMax, yMax int) bool {
     //botLeft := []int { {1, -1} }
     //botRight := []int { {1, 1} }
     // if (topLeft M and botRight S && topRight M and botLeft S) || (topLeft M and botRight S && topRight S and botLeft M) || ...
-    if (topLeft == 'M' && topRight == 'S' && botLeft == 'S' && botRight == 'M') || 
-        (topLeft == 'M' && topRight == 'S' && botLeft == 'M' && botRight == 'S') ||
+    if (topLeft == 'M' && topRight == 'S' && botLeft == 'M' && botRight == 'S') ||
 	(topLeft == 'M' && topRight == 'M' && botLeft == 'S' && botRight == 'S') ||
         (topLeft == 'S' && topRight == 'M' && botLeft == 'S' && botRight == 'M') ||
         (topLeft == 'S' && topRight == 'S' && botLeft == 'M' && botRight == 'M') {  
