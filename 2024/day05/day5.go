@@ -21,16 +21,13 @@ func main() {
 }
 
 func getPuzzle(filename string) []string {
-    file, err := os.Open(filename)
-    if err != nil {
-    panic(err)
-    }
+    file, _ := os.Open(filename)
     defer file.Close()
 
     var puzzle []string
     scanner := bufio.NewScanner(file)
     for scanner.Scan() {
-    puzzle = append(puzzle, scanner.Text())
+        puzzle = append(puzzle, scanner.Text())
     }
     return puzzle
 }
@@ -41,7 +38,7 @@ func getRulesPages(puzzle []string) (map[int][]int, [][]int) {
 
     isRulesSection := true
     for _, line := range puzzle {
-    line = strings.TrimSpace(line)
+        line = strings.TrimSpace(line)
     if line == "" {
         isRulesSection = false
         continue
@@ -55,8 +52,8 @@ func getRulesPages(puzzle []string) (map[int][]int, [][]int) {
     } else {
         update := []int{}
         for _, numStr := range strings.Split(line, ",") {
-        num, _ := strconv.Atoi(strings.TrimSpace(numStr))
-        update = append(update, num)
+            num, _ := strconv.Atoi(strings.TrimSpace(numStr))
+            update = append(update, num)
         }
         updates = append(updates, update)
     }
@@ -69,14 +66,14 @@ func validateAndSum(rules map[int][]int, updates [][]int) (int, int) {
     sumCr := 0
 
     for _, update := range updates {
-    if isValidUpdate(rules, update) {
-        middleIndex := len(update) / 2
-        sum += update[middleIndex]
-    } else {
-        correctOrder := reorderUpdate(rules, update)
-        middleIndexCr := len(correctOrder)/2
-        sumCr += correctOrder[middleIndexCr]
-    }
+        if isValidUpdate(rules, update) {
+            middleIndex := len(update) / 2
+            sum += update[middleIndex]
+        } else {
+            correctOrder := reorderUpdate(rules, update)
+            middleIndexCr := len(correctOrder)/2
+            sumCr += correctOrder[middleIndexCr]
+        }
     }
     return sum, sumCr
 }
@@ -88,16 +85,16 @@ func isValidUpdate(rules map[int][]int, update []int) bool {
     }
 
     for x, dependents := range rules {
-    if posX, existsX := position[x]; existsX {
-        for _, y := range dependents {
-        if posY, existsY := position[y]; existsY {
-            // if you got this far in this mess of if and for, that means the order is bad
-            if posX > posY {
-            return false
+        if posX, existsX := position[x]; existsX {
+            for _, y := range dependents {
+                if posY, existsY := position[y]; existsY {
+                    // if you got this far in this mess of if and for, that means the order is bad
+                    if posX > posY {
+                        return false
+                    }
+                }
             }
         }
-        }
-    }
     }
     return true
 }
